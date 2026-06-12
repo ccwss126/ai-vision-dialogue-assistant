@@ -11,14 +11,22 @@ const loading = ref(false)
 const errorMessage = ref('')
 const aiCallCount = ref(0)
 const isPerceptionActive = ref(false)
+const isSpeechEnabled = ref(true)
 
 function speakAnswer(text) {
+  if (!isSpeechEnabled.value) return
   if (!window.speechSynthesis || !text) return
 
   window.speechSynthesis.cancel()
   const utterance = new SpeechSynthesisUtterance(text)
   utterance.lang = 'zh-CN'
   window.speechSynthesis.speak(utterance)
+}
+
+function stopSpeaking() {
+  if (!window.speechSynthesis) return
+
+  window.speechSynthesis.cancel()
 }
 
 async function sendToAi() {
@@ -126,6 +134,15 @@ function handlePerceptionChange(active) {
         <div class="question-box">
           <span>当前问题</span>
           <p>{{ questionText || '等待语音识别或手动输入...' }}</p>
+        </div>
+        <div class="speech-controls">
+          <label class="switch-row">
+            <input v-model="isSpeechEnabled" type="checkbox" />
+            <span>开启语音播报</span>
+          </label>
+          <button type="button" class="secondary-button" @click="stopSpeaking">
+            停止播报
+          </button>
         </div>
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
       </aside>
