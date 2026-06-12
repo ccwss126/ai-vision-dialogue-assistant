@@ -23,6 +23,27 @@ function stopCamera() {
   }
 }
 
+function captureFrame() {
+  const video = videoRef.value
+
+  if (!video || !video.videoWidth || !video.videoHeight) {
+    return ''
+  }
+
+  const canvas = document.createElement('canvas')
+  canvas.width = video.videoWidth
+  canvas.height = video.videoHeight
+
+  const context = canvas.getContext('2d')
+  context.drawImage(video, 0, 0, canvas.width, canvas.height)
+
+  return canvas.toDataURL('image/png')
+}
+
+defineExpose({
+  captureFrame,
+})
+
 onBeforeUnmount(stopCamera)
 </script>
 
